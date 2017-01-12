@@ -21,9 +21,9 @@ var player = {
   // "level": 1
 }
 
-var settings = {
+var settingsData = {
   "darkMode": false,
-
+  "playedOnce": false
 }
 
 var cardTypes = [
@@ -97,31 +97,33 @@ overlay.addEventListener("click", function (event) {
 var help = document.getElementById('help');
 var helpText;
 helpText  = "<h3>HOW TO PLAY</h3>";
-helpText += "<p>Click on cards to select which card to take.</p>";
-helpText += "<ul><li>coins give you money</li>";
-helpText += "<li>weapons increase your ATK, but cost the amount of ATK it gives</li>";
-helpText += "<li>hearts increase your HP, but cost the amount of HP it gives</li>";
-helpText += "<li>monsters give you money, but can hurt you for HP</li></ul>";
-helpText += "<p>if your HP reaches zero, it's game over</p>";
-helpText += "<p>try to manage your status, as it can be easy to run out of MONEY or HP</p>";
+helpText += "<p><b>Click on cards</b> to select which card to take.</p>";
+helpText += "<p>(You can also use <b>key commands</b>: 1, 2, and 3 to select those cards, r to restart on game over)</p>";
+helpText += "<ul><li><b>COINS</b> give you <b>MONEY</b></li>";
+helpText += "<li><b>WEAPONS</b> increase your <b>ATK</b>, but cost the amount of <b>ATK</b> it gives</li>";
+helpText += "<li><b>HEARTS</b> increase your <b>HP</b>, but cost the amount of <b>HP</b> it gives</li>";
+helpText += "<li><b>MONSTERS</b> give you <b>MONEY</b>, but can hurt you for <b>HP</b></li>";
+helpText += "<li><b>BOSSES</b> must be defeated to level up</li></ul>";
+helpText += "<p>If your <b>HP</b> reaches zero, it's game over</p>";
+helpText += "<p>Try to manage your status, as it can be easy to run out of <b>MONEY</b> or <b>HP</b></p>";
 help.addEventListener("click", function (event) { overlayToggle(helpText); });
 
 
 var settings = document.getElementById('settings');
 var settingsText;
 settingsText  = "<h3>SETTINGS</h3>";
-settingsText += "<p>no settings yet!</p>";
+settingsText += "<p>No settings yet!</p>";
 settings.addEventListener("click", function (event) { overlayToggle(settingsText); });
 
 
 var info = document.getElementById('info');
 var infoText;
 infoText  = "<h3>INFO</h3>";
-infoText += "<p>this game was made by <a href=\"https://nathanwentworth.co\" target=\"_blank\">nathan wentworth (me)</a> in the course of a week for the Games Made Quick jam</p>";
-infoText += "<p>made with basic html, css, and vanilla js. icons and graphics made with illustrator</p>";
-infoText += "<p>questions/comments/bugs? <a href=\"https://twitter.com/nathanwentworth\" target=\"_blank\">tweet at me</a>!</p>";
-infoText += "<p>this game is open source on github, downloadable on itchio</p>";
-infoText += "<p>version: 2017.01.11-20.07</p>";
+infoText += "<p>DECK DUNGEON was made by <a href=\"https://nathanwentworth.co\" target=\"_blank\">nathan wentworth (me)</a> in the course of a week for the <a href=\"https://itch.io/jam/games-made-quick\">Games Made Quick jam</a>.</p>";
+infoText += "<p>Made with basic html, css, and vanilla js. Icons and graphics made with Illustrator</p>";
+infoText += "<p>Questions/Comments/Bugs? <a href=\"https://twitter.com/nathanwentworth\" target=\"_blank\">tweet at me</a>!</p>";
+infoText += "<p>open source on github, downloadable on itchio</p>";
+infoText += "<p>version: 2017.01.11-21.37</p>";
 info.addEventListener("click", function (event) { overlayToggle(infoText); });
 
 
@@ -153,6 +155,14 @@ var init = function () {
     player["money"] = 10;
     player["turns"] = 0;
     player["level"] = 1;
+  }
+
+  if (localStorage.getItem('settingsData') != null) {
+    settingsData = JSON.parse(localStorage.getItem('settingsData'));
+  } else {
+    overlayToggle(helpText);
+    settingsData["darkMode"] = false;
+    settingsData["playedOnce"] = true;
   }
 
   // if there is card data stored in local storage, load it
@@ -603,12 +613,14 @@ var incrementTurn = function () {
   if (player.turns % 6 == 1 && player.turns != 1) {
     player.level++;
     player.maxHealth = player.level * 16;
+    player.health += 16;
   }
   console.log("turns: " + player.turns);
 }
 
 var displayStatus = function () {
   localStorage.setItem('player', JSON.stringify(player));
+  localStorage.setItem('settingsData', JSON.stringify(settingsData));
 
   if (player.health <= 0) {
     gameOver();
@@ -654,7 +666,7 @@ var gameOver = function () {
     cardContainer.appendChild(restartButton);
 
     cover.style.display = "none";
-  }, 2000);
+  }, 1500);
 
 }
 

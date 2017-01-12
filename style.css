@@ -12,14 +12,12 @@ html {font-family: sans-serif;-ms-text-size-adjust: 100%;-webkit-text-size-adjus
 	text-shadow: none;
 }
 
-* {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  cursor: default;
-}
-
+/*
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+*/
 
 body {
 	background: #fff;
@@ -47,6 +45,14 @@ pre {
 }
 
 /* # site styles */
+
+.unselectable {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	cursor: default;
+}
 
 #cover {
 	display: none;
@@ -85,14 +91,14 @@ pre {
 	text-align: center;
 	margin: auto;
 	padding-top: 32px;
+	padding-bottom: 8px;
 }
 #overlay div p {
   -webkit-user-select: initial;
   -moz-user-select: initial;
   -ms-user-select: initial;
   user-select: initial;
-	padding: 24px;
-	padding-bottom: 8px;
+	padding: 8px 24px;
 	margin: 0;
 }
 #overlay div ul {
@@ -140,6 +146,14 @@ main {
 	align-items: center;
   justify-content: center;
   overflow: hidden;
+}
+
+main * {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	cursor: default;
 }
 
 main > p:last-child:hover {
