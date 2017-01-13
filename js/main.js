@@ -1,15 +1,3 @@
-
-
-/*
-
-* the purchasing value of hearts and weapons are the relative health and damage given by the card
-  * so if the weapon has 4 damage, it costs 4 coins
-  * if the hearts have 8 health, it costs 8 coins
-* every six turns is a level, each level increases the overall difficulty of enemies
-
-*/
-
-
 // player data container
 // stores health, damage, money, turns taken, and levels cleared
 var player = {
@@ -33,7 +21,6 @@ var cardTypes = [
   "coin" // has value
 ];
 
-
 // data container for the three cards on screen
 // 1, 2, and 3 are each card
 // the sub-objects have the data values in them
@@ -43,58 +30,41 @@ var cardTypes = [
 //   * damage
 //   * value
 var cards = {
-  1: {
-    // "type": "monster",
-    // "health": 8,
-    // "dmg": 2
-  },
-  2: {
-    // "type": "heart",
-    // "health": 4
-  },
-  3: {
-    // "type": "weapon",
-    // "dmg": 10
-  }
+  1: { },
+  2: { },
+  3: { }
 }
 
-// this element holds the cards
-var cardContainer = document.getElementsByTagName('main')[0];
-// main body element
-var body = document.getElementById('body');
-// this element covers up all other elements
-// so the player can't click on cards during transitions
-var cover = document.getElementById('cover');
-// this is the reset button in the top right
-// clicking this clears all data in the game and restarts
-var resetGame = document.getElementById('reset');
-resetGame.addEventListener("click", function (event) { clearData(); init(); });
-var menuElem = document.getElementById('menu-btn');
-menuElem.addEventListener("click", function (event) { menuToggle(); });
+/*
+  Element variables
+*/
 
+var cardContainer = document.getElementsByTagName('main')[0];
+var body = document.getElementById('body');
+var resetGame = document.getElementById('reset');
+var menuElem = document.getElementById('menu-btn');
+var menuList = document.getElementById('menu-list');
 var statusBar = document.getElementById('status');
 var statusHp = document.getElementById('status-hp');
 var statusAtk = document.getElementById('status-atk');
 var statusMoney = document.getElementById('status-money');
 var statusTurns = document.getElementById('status-turns');
 var statusLvl = document.getElementById('status-lvl');
+var help = document.getElementById('help');
+var settings = document.getElementById('settings');
+var info = document.getElementById('info');
 
+
+resetGame.addEventListener("click", function (event) { clearData(); init(); });
+menuElem.addEventListener("click", function (event) { menuToggle(); });
 
 var overlay = document.getElementById('overlay');
 overlay.style.display = "none";
 overlay.addEventListener("click", function (event) {
-  if (event.target !== this) {
-    console.log("return");
-    return;
-  }
-  else {
-    console.log (event.target + " " + this);
-    overlayToggle(); 
-  }
-
+  if (event.target !== this) { return; }
+  else { overlayToggle(); }
 });
 
-var help = document.getElementById('help');
 var helpText;
 helpText  = "<h3>HOW TO PLAY</h3>";
 helpText += "<p><b>Click on cards</b> to select which card to take.</p>";
@@ -108,32 +78,30 @@ helpText += "<p>If your <b>HP</b> reaches zero, it's game over</p>";
 helpText += "<p>Try to manage your status, as it can be easy to run out of <b>MONEY</b> or <b>HP</b></p>";
 help.addEventListener("click", function (event) { overlayToggle(helpText); });
 
-
-var settings = document.getElementById('settings');
 var settingsText;
 settingsText  = "<h3>SETTINGS</h3>";
 settingsText += "<p>No settings yet!</p>";
 settings.addEventListener("click", function (event) { overlayToggle(settingsText); });
 
-
-var info = document.getElementById('info');
 var infoText;
 infoText  = "<h3>INFO</h3>";
 infoText += "<p>DECK DUNGEON was made by <a href=\"https://nathanwentworth.co\" target=\"_blank\">nathan wentworth (me)</a> in the course of a week for the <a href=\"https://itch.io/jam/games-made-quick\">Games Made Quick jam</a>.</p>";
 infoText += "<p>Made with basic html, css, and vanilla js. Icons and graphics made with Illustrator</p>";
 infoText += "<p>Questions/Comments/Bugs? <a href=\"https://twitter.com/nathanwentworth\" target=\"_blank\">tweet at me</a>!</p>";
-infoText += "<p>open source on github, downloadable on itchio</p>";
+infoText += "<p>open source on <a href=\"https://github.com/nathanwentworth/deck-dungeon\" target=\"_blank\">github</a>, downloadable on itchio (soon!)</p>";
 infoText += "<p>version: 2017.01.11-21.37</p>";
 info.addEventListener("click", function (event) { overlayToggle(infoText); });
 
 
 window.addEventListener("keydown", function (event) {
 
-  if (event.keyCode == 49 && !cardContainer.childNodes[0].classList.contains("disabled")) {
+  var cardChildren = cardContainer.childNodes;
+
+  if (event.keyCode == 49 && !cardChildren[0].classList.contains("disabled")) {
     cardAction(null, 0);
-  } else if (event.keyCode == 50 && cardContainer.childNodes[1] != null && !cardContainer.childNodes[1].classList.contains("disabled")) {
+  } else if (event.keyCode == 50 && cardChildren[1] != null && !cardChildren[1].classList.contains("disabled")) {
     cardAction(null, 1);
-  } else if (event.keyCode == 51 && cardContainer.childNodes[2] != null && !cardContainer.childNodes[2].classList.contains("disabled")) {
+  } else if (event.keyCode == 51 && cardChildren[2] != null && !cardChildren[2].classList.contains("disabled")) {
     cardAction(null, 2);
   } else if (player.health == 0 && event.keyCode == 82) {
     clearData();
@@ -141,6 +109,20 @@ window.addEventListener("keydown", function (event) {
   }
 
 });
+
+window.onload = function () {
+  var titleElem = document.createElement('div');
+  titleElem.setAttribute('class', 'game-title');
+  titleElem.textContent = "DECK DUNGEON";
+  cardContainer.appendChild(titleElem);
+
+  statusBar.style.top = "-2em";
+  menuElem.style.top = "-2em";
+
+  setTimeout( function () {
+    init();    
+  }, 1500)
+}
 
 // initializes the game
 var init = function () {
@@ -178,6 +160,11 @@ var init = function () {
   // displays the current player status bar
   displayStatus();
 
+  statusBar.style.animation = "statusBarMoveDown 1s";
+  menuElem.style.animation = "statusBarMoveDown 1s";
+  statusBar.style.top = "16px";
+  menuElem.style.top = "16px";
+
   // sets the flex direction of the card container
   // mainly for game resets
   cardContainer.style.flexDirection = "row";
@@ -187,7 +174,6 @@ var init = function () {
 // each has random types and values
 var randomizeCards = function () {
   // clears cards before making any more
-  clearCards();
 
   // if this value is 3, reshuffle the cards
   // this occurs when the cards can only be purchased
@@ -265,6 +251,8 @@ var randomizeCards = function () {
 // this creates the card html elements
 var instantiateCards = function () {
 
+  clearCards();
+
   var length;
   var boss = (player.turns % 6 == 0 && player.turns != 0) ? true : false;
   length = (boss) ? 1 : Object.keys(cards).length;
@@ -276,11 +264,13 @@ var instantiateCards = function () {
     var cardElem = document.createElement('div');
     cardElem.setAttribute('class', 'card disabled');
 
-    var cardTitle = document.createElement('h2');
+    var cardTitle = document.createElement('div');
+    cardTitle.setAttribute('class', 'card-title');
     cardTitle.textContent = (boss) ? "BOSS" : cardType;
 
     var cardImage = document.createElement('img');
-    cardImage.setAttribute('src', 'img/' + cardType + "-" + (player.level - 1) + ".png");
+    var imgNum = ((player.level - 1) > 6) ? 6 : (player.level - 1);
+    cardImage.setAttribute('src', 'img/' + cardType + "-" + imgNum + ".png");
 
     cardElem.appendChild(cardTitle);
     cardElem.appendChild(cardImage);
@@ -311,13 +301,10 @@ var instantiateCards = function () {
         cardContainer.childNodes[i].style.animation = null;
         cardContainer.childNodes[i].classList.remove("disabled");
       }
-      console.log("no more anim, normal monster");
     }, 1100);
 
     cardContainer.appendChild(cardElem);
   }
-
-  cover.style.display = "none";
 
   localStorage.setItem('cards', JSON.stringify(cards));
 }
@@ -339,11 +326,7 @@ var cardAction = function (event, index) {
     console.log("card disabled");
     return;
   }
-  // if the element clicked was not the outer div element, find the parent div
   
-  // find the index of the card in the node list
-  
-
   // if the card div can't be found, this will return
   if (index == -1) {
     console.log ("error! not a card");
@@ -452,14 +435,17 @@ var fight = function (card, event, index) {
     index = index;
   }
 
+  var cardNode = cardContainer.childNodes[index];
+  var cardChildren = cardContainer.childNodes;
+
   for (var i = 0; i < cardContainer.childNodes.length; i++) {
 
-    cardContainer.childNodes[i].removeEventListener("click", function(){ cardAction(); });
+    cardChildren[i].removeEventListener("click", function(){ cardAction(); });
 
     if (i != index) {
-      cardContainer.childNodes[i].classList.add("disabled");
-      cardContainer.childNodes[i].style.animation = "moveCardDown 1s";
-      cardContainer.childNodes[i].style.top = "100vh";
+      cardChildren[i].classList.add("disabled");
+      cardChildren[i].style.animation = "moveCardDown 1s";
+      cardChildren[i].style.top = "100vh";
     }
   }
 
@@ -467,13 +453,14 @@ var fight = function (card, event, index) {
   if (getRandomInt(1, 100) > 50) {
     card["health"] -= player["atk"];
     text = "MONSTER HP -" + player["atk"];
-    for (var i = 0; i < cardContainer.childNodes[index].childNodes.length; i++) {
-      if (cardContainer.childNodes[index].childNodes[i].className == "card-stat health") {
-        cardContainer.childNodes[index].childNodes[i].textContent = "HP: " + card["health"];
+    for (var i = 0; i < cardNode.childNodes.length; i++) {
+      if (cardNode.childNodes[i].className == "card-stat health") {
+        cardNode.childNodes[i].textContent = "HP: " + card["health"];
         break;
       }
     }
   }
+
   if (getRandomInt(1, 100) < 50) {
     player["health"] -= card["dmg"];
     if (text == null) {
@@ -482,10 +469,11 @@ var fight = function (card, event, index) {
       text += " PLAYER HP -" + card["dmg"];
     }
   }
+
   if (card["health"] <= 0) {
     // setCardInactive(index);
-    cardContainer.childNodes[index].style.animation = "moveCardDown 1s";
-    cardContainer.childNodes[index].style.top = "100vh";
+    cardNode.style.animation = "moveCardDown 1s";
+    cardNode.style.top = "100vh";
     setTimeout( randomizeCards, 1500);
     player["money"] += card["value"];
     if (text == null) {
@@ -502,6 +490,7 @@ var fight = function (card, event, index) {
   if (text == null) {
     text = "MISS!";
   }
+
   popupText(event, index, text, 1.5);
 }
 
@@ -517,12 +506,7 @@ var changeStat = function (type, value) {
 }
 
 var menuToggle = function () {
-  var menuList = document.getElementById('menu-list');
-  if (menuList.style.display == "none") {
-    menuList.style.display = "initial";
-  } else {
-    menuList.style.display = "none";
-  }
+  menuList.style.display = (menuList.style.display == "none") ? "initial" : "none";
 }
 
 var overlayToggle = function (text) {
@@ -540,30 +524,30 @@ var overlayToggle = function (text) {
 
 var setCardInactive = function (index) {
 
-  cover.style.display = "initial";
+  var cardChildren = cardContainer.childNodes;
 
 
   if (index == -1) {
-    for (var i = 0; i < cardContainer.childNodes.length; i++) {
-      cardContainer.childNodes[i].classList.add("disabled");
-      cardContainer.childNodes[i].style.animation = "moveCardDown 1s";
-      cardContainer.childNodes[i].style.top = "100vh";      
+    for (var i = 0; i < cardChildren.length; i++) {
+      cardChildren[i].classList.add("disabled");
+      cardChildren[i].style.animation = "moveCardDown 1s";
+      cardChildren[i].style.top = "100vh";      
     }
   } else {
-    for (var i = 0; i < cardContainer.childNodes.length; i++) {
+    for (var i = 0; i < cardChildren.length; i++) {
 
-      cardContainer.childNodes[i].removeEventListener("click", function(){ cardAction(); });
+      cardChildren[i].removeEventListener("click", function(){ cardAction(); });
       console.log("event listener removed");
-      cardContainer.childNodes[i].classList.add("disabled");
+      cardChildren[i].classList.add("disabled");
 
       if (i != index) {
-        cardContainer.childNodes[i].style.animation = "moveCardDown 1s";
-        cardContainer.childNodes[i].style.top = "100vh";
+        cardChildren[i].style.animation = "moveCardDown 1s";
+        cardChildren[i].style.top = "100vh";
       }
     }
     setTimeout( function () {
-      cardContainer.childNodes[index].style.animation = "moveCardDown 1s";
-      cardContainer.childNodes[index].style.top = "100vh";
+      cardChildren[index].style.animation = "moveCardDown 1s";
+      cardChildren[index].style.top = "100vh";
     }, 1500);
   }
   // target.style.animation = "moveCardDown 1s";
@@ -615,26 +599,23 @@ var incrementTurn = function () {
     player.maxHealth = player.level * 16;
     player.health += 16;
   }
-  console.log("turns: " + player.turns);
 }
 
 var displayStatus = function () {
   localStorage.setItem('player', JSON.stringify(player));
   localStorage.setItem('settingsData', JSON.stringify(settingsData));
 
-  if (player.health <= 0) {
-    gameOver();
-  } else if (player.health <= (0.25 * player.maxHealth)) {
-    statusHp.style.color = "#ff0000";
-  } else {
-    statusHp.style.color = "#222";
-  }
+  statusHp.style.color = (player.health <= (0.25 * player.maxHealth)) ? "#ff0000" : "#222";
 
   statusHp.textContent = "HP:" + player["health"] + "/" + player["maxHealth"];
   statusAtk.textContent = "ATK:" + player["atk"];
   statusMoney.textContent = "MONEY:" + player["money"];
   statusTurns.textContent = "TURNS:" + player.turns;
   statusLvl.textContent = "LVL:" + player.level;
+
+  if (player.health <= 0) {
+    gameOver();
+  }
 }
 
 var clearData = function () {
@@ -664,8 +645,6 @@ var gameOver = function () {
     cardContainer.appendChild(gameOverTitle);
     cardContainer.appendChild(gameOverStats);
     cardContainer.appendChild(restartButton);
-
-    cover.style.display = "none";
   }, 1500);
 
 }
@@ -677,4 +656,4 @@ function getRandomInt(min, max) {
 }
 
 
-init();
+// init();

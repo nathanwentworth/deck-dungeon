@@ -1,5 +1,5 @@
 /* # normalize */
-html {font-family: sans-serif;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;}body {margin: 0;padding:0;}article,aside,details,figcaption,figure,footer,header,hgroup,main,menu,nav,section,summary {display: block;}audio,canvas,progress,video {display: inline-block;vertical-align: baseline;}a {background-color: transparent;}a:active,a:hover {outline: 0;}b,strong {font-weight: bold;}img {border: 0;}svg:not(:root) {overflow: hidden;}hr {box-sizing: content-box;height: 0;}pre {overflow: auto;}button {overflow: visible;}audio,canvas,iframe,img,svg,video {vertical-align: middle;}fieldset {border: 0;margin: 0;padding: 0;}
+html {font-family: sans-serif;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;}body {margin: 0;padding:0;}a {background-color: transparent;}a:active,a:hover {outline: 0;}b {font-weight: bold;}img {border: 0;}svg:not(:root) {overflow: hidden;}
 
 /* # universal styles */
 
@@ -29,7 +29,7 @@ body {
 	max-height: 100vh;
 	margin: 0;
 	font-size: 1.15em;
-	font-family: monospace;
+	font-family: 'menlo', monospace;
 }
 
 /* # defaults */
@@ -52,16 +52,6 @@ pre {
 	-ms-user-select: none;
 	user-select: none;
 	cursor: default;
-}
-
-#cover {
-	display: none;
-	position: absolute;
-	width: 100vw;
-	height: 100vh;
-	top: 0;
-	left: 0;
-	z-index: 1000;
 }
 
 #overlay {
@@ -107,7 +97,7 @@ pre {
 
 #status {
 	position: absolute;
-	top: 16px;
+	top: -1.5em;
 	left: 16px;
 }
 #status span {
@@ -116,7 +106,7 @@ pre {
 
 #menu-btn {
 	position: absolute;
-	top: 16px;
+	top: -1.5em;
 	right: 16px;
 }
 #menu-list {
@@ -160,6 +150,12 @@ main > p:last-child:hover {
 	text-decoration: underline;
 }
 
+main div.game-title {
+	font-size: 48px;
+	font-weight: bold;
+	animation: titleFade 1.5s;
+}
+
 main div.card {
 	position: relative;
 	display: flex;
@@ -182,6 +178,12 @@ main div.card:hover {
 	transform: translateY(-6px);
 }
 
+main div.card .card-title {
+	font-weight: bold;
+	font-size: 1.35rem;
+	margin: 1rem;
+}
+
 main div.card img {
 	width: auto;
 	height: auto;
@@ -189,10 +191,6 @@ main div.card img {
 	max-height: 60%;
 	display: block;
 	margin: auto;
-}
-
-main div.card h2 {
-	text-align: center;
 }
 
 main div.card span.card-stat {
@@ -219,14 +217,29 @@ hr {
   padding: 0;
 }
 
+@keyframes statusBarMoveDown {
+	0% { top: -2em; }
+	100% { top: 16px; }
+}
+
 @keyframes moveCardDown {
-  from {top: 0;}
-  to {top: 100vh;}
+  0% {top: 0;}
+  100% {top: 100vh;}
+}
+
+@keyframes titleFade {
+	0% {opacity: 1;}
+	80% {opacity: 1;}
+	100% {opacity: 0;}
 }
 
 @keyframes moveCardUp {
-  from {top: 100vh;}
-  to {top: 0;}
+  0% {
+  	top: 100vh;
+  }
+  100% {
+  	top: 0;
+  }
 }
 
 @keyframes popupText {
