@@ -4,11 +4,11 @@ html {font-family: sans-serif;-ms-text-size-adjust: 100%;-webkit-text-size-adjus
 /* # universal styles */
 
 ::-moz-selection {
-	background: #fcb7b3;
+	color: #70B38B;
 	text-shadow: none;
 }
 ::selection {
-	background: #fcb7b3;
+	color: #70B38B;
 	text-shadow: none;
 }
 
@@ -21,15 +21,16 @@ user-select: none;
 
 body {
 	background: #fff;
-	color: #222;
+	color: #28364f;
 	line-height: 1.375rem;
 	width: 100%;
 	height: 100%;
 	max-width: 100vw;
 	max-height: 100vh;
 	margin: 0;
-	font-size: 1.15em;
-	font-family: 'menlo', monospace;
+	font-size: 1.3em;
+	font-family: 'Alegreya Sans', sans-serif;
+	font-weight: 500;
 }
 
 /* # defaults */
@@ -94,8 +95,12 @@ pre {
 #overlay div ul {
 	padding-right: 16px;
 }
+#overlay div li {
+	padding: 6px 0;
+}
 
 #status {
+	font-weight: bold;
 	position: absolute;
 	top: -1.5em;
 	left: 16px;
@@ -111,7 +116,7 @@ pre {
 }
 #menu-list {
 	position: absolute;
-	top: 32px;
+	top: 2em;
 	right: 16px;
 	z-index: 600;
 	background: #fff;
@@ -180,7 +185,7 @@ main div.card:hover {
 
 main div.card .card-title {
 	font-weight: bold;
-	font-size: 1.35rem;
+	font-size: 1.35em;
 	margin: 1rem;
 }
 

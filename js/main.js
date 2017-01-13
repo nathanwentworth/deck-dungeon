@@ -89,7 +89,7 @@ infoText += "<p>DECK DUNGEON was made by <a href=\"https://nathanwentworth.co\" 
 infoText += "<p>Made with basic html, css, and vanilla js. Icons and graphics made with Illustrator</p>";
 infoText += "<p>Questions/Comments/Bugs? <a href=\"https://twitter.com/nathanwentworth\" target=\"_blank\">tweet at me</a>!</p>";
 infoText += "<p>open source on <a href=\"https://github.com/nathanwentworth/deck-dungeon\" target=\"_blank\">github</a>, downloadable on itchio (soon!)</p>";
-infoText += "<p>version: 2017.01.11-21.37</p>";
+infoText += "<p>version: 2017.01.12-20.40</p>";
 info.addEventListener("click", function (event) { overlayToggle(infoText); });
 
 
@@ -111,17 +111,18 @@ window.addEventListener("keydown", function (event) {
 });
 
 window.onload = function () {
-  var titleElem = document.createElement('div');
-  titleElem.setAttribute('class', 'game-title');
-  titleElem.textContent = "DECK DUNGEON";
-  cardContainer.appendChild(titleElem);
+  // var titleElem = document.createElement('div');
+  // var titleImg = document.createElement('img');
+  // titleElem.setAttribute('class', 'game-title');
+  // titleElem.textContent = "DECK DUNGEON";
+  // cardContainer.appendChild(titleElem);
 
   statusBar.style.top = "-2em";
   menuElem.style.top = "-2em";
 
   setTimeout( function () {
     init();    
-  }, 1500)
+  }, 1450)
 }
 
 // initializes the game
@@ -206,7 +207,7 @@ var randomizeCards = function () {
       switch (subCardData["type"]) {
         case "monster":
           subCardData["health"] = (getRandomInt(4, 12) * player.level);
-          subCardData["dmg"] = (getRandomInt(4, 12) * player.level);
+          subCardData["dmg"] = (getRandomInt(4, 8) * player.level);
           subCardData["value"] = (subCardData["health"] * player.level);
           break;
         case "heart":
@@ -450,6 +451,7 @@ var fight = function (card, event, index) {
   }
 
   var text = null;
+  // player attacking
   if (getRandomInt(1, 100) > 50) {
     card["health"] -= player["atk"];
     text = "MONSTER HP -" + player["atk"];
@@ -461,15 +463,8 @@ var fight = function (card, event, index) {
     }
   }
 
-  if (getRandomInt(1, 100) < 50) {
-    player["health"] -= card["dmg"];
-    if (text == null) {
-      text = "PLAYER HP -" + card["dmg"];
-    } else {
-      text += " PLAYER HP -" + card["dmg"];
-    }
-  }
-
+  // check of the monster is dead after the last hit
+  // don't allow the monster to attack if so
   if (card["health"] <= 0) {
     // setCardInactive(index);
     cardNode.style.animation = "moveCardDown 1s";
@@ -486,6 +481,17 @@ var fight = function (card, event, index) {
     incrementTurn();
     return;
   }
+
+  // monster attacking
+  if (getRandomInt(1, 100) < 50) {
+    player["health"] -= card["dmg"];
+    if (text == null) {
+      text = "PLAYER HP -" + card["dmg"];
+    } else {
+      text += " PLAYER HP -" + card["dmg"];
+    }
+  }
+
 
   if (text == null) {
     text = "MISS!";
@@ -607,11 +613,11 @@ var displayStatus = function () {
 
   statusHp.style.color = (player.health <= (0.25 * player.maxHealth)) ? "#ff0000" : "#222";
 
-  statusHp.textContent = "HP:" + player["health"] + "/" + player["maxHealth"];
-  statusAtk.textContent = "ATK:" + player["atk"];
-  statusMoney.textContent = "MONEY:" + player["money"];
-  statusTurns.textContent = "TURNS:" + player.turns;
-  statusLvl.textContent = "LVL:" + player.level;
+  statusHp.textContent = "HP: " + player["health"] + "/" + player["maxHealth"];
+  statusAtk.textContent = "ATK: " + player["atk"];
+  statusMoney.textContent = "MONEY: " + player["money"];
+  statusTurns.textContent = "TURNS: " + player.turns;
+  statusLvl.textContent = "LVL: " + player.level;
 
   if (player.health <= 0) {
     gameOver();
@@ -621,6 +627,10 @@ var displayStatus = function () {
 var clearData = function () {
   localStorage.removeItem('player');
   localStorage.removeItem('cards');
+}
+
+var resetSettings = function () {
+  localStorage.removeItem('settingsData');
 }
 
 var gameOver = function () {
