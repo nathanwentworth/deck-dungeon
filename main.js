@@ -88,7 +88,7 @@ infoText  = "<h3>INFO</h3>";
 infoText += "<p>DECK DUNGEON was made by <a href=\"https://nathanwentworth.co\" target=\"_blank\">nathan wentworth (me)</a> in the course of a week for the <a href=\"https://itch.io/jam/games-made-quick\">Games Made Quick jam</a>.</p>";
 infoText += "<p>Made with basic html, css, and vanilla js. Icons and graphics made with Illustrator</p>";
 infoText += "<p>Questions/Comments/Bugs? <a href=\"https://twitter.com/nathanwentworth\" target=\"_blank\">tweet at me</a>!</p>";
-infoText += "<p>open source on <a href=\"https://github.com/nathanwentworth/deck-dungeon\" target=\"_blank\">github</a>, downloadable on itchio (soon!)</p>";
+infoText += "<p>open source on <a href=\"https://github.com/nathanwentworth/deck-dungeon\" target=\"_blank\">github</a>, downloadable on <a href=\"https://nathanwentworth.itch.io/deck-dungeon\">itchio</a></p>";
 infoText += "<p>version: 2017.01.12-20.40</p>";
 info.addEventListener("click", function (event) { overlayToggle(infoText); });
 
@@ -223,7 +223,7 @@ var randomizeCards = function () {
           }
           break;
         case "coin":
-          subCardData["value"] = (getRandomInt(2, 8) * player.level);
+          subCardData["value"] = (getRandomInt(2, 4) * player.level);
           break;
         default:
           console.log("unknown type of card! this should never happen");
@@ -270,7 +270,7 @@ var instantiateCards = function () {
     cardTitle.textContent = (boss) ? "BOSS" : cardType;
 
     var cardImage = document.createElement('img');
-    var imgNum = ((player.level - 1) > 6) ? 6 : (player.level - 1);
+    var imgNum = ((player.level - 1) > 7) ? 7 : (player.level - 1);
     cardImage.setAttribute('src', 'img/' + cardType + "-" + imgNum + ".png");
 
     cardElem.appendChild(cardTitle);
@@ -611,7 +611,7 @@ var displayStatus = function () {
   localStorage.setItem('player', JSON.stringify(player));
   localStorage.setItem('settingsData', JSON.stringify(settingsData));
 
-  statusHp.style.color = (player.health <= (0.25 * player.maxHealth)) ? "#ff0000" : "#222";
+  statusHp.style.color = (player.health <= (0.25 * player.maxHealth)) ? "#ff0000" : "#28364f";
 
   statusHp.textContent = "HP: " + player["health"] + "/" + player["maxHealth"];
   statusAtk.textContent = "ATK: " + player["atk"];

@@ -155,10 +155,10 @@ main > p:last-child:hover {
 	text-decoration: underline;
 }
 
-main div.game-title {
-	font-size: 48px;
-	font-weight: bold;
+main .game-title {
+	opacity: 0;
 	animation: titleFade 1.5s;
+	max-width: 100%;
 }
 
 main div.card {
@@ -223,8 +223,14 @@ hr {
 }
 
 @keyframes statusBarMoveDown {
-	0% { top: -2em; }
-	100% { top: 16px; }
+	0% {
+		top: -2em;
+		opacity: 0;
+	}
+	100% {
+		top: 16px;
+		opacity: 1;
+	}
 }
 
 @keyframes moveCardDown {
@@ -287,7 +293,7 @@ hr {
 		align-items: center;
 	  justify-content: center;
 		flex-direction: column;
-		width: 75vw;
+		width: 30vw;
 		height: 75vh;
 		max-height: 540px;
 		max-width: 360px;
@@ -299,6 +305,12 @@ hr {
 		height: calc(100vh - 4rem);
 		margin: 16px;
 		margin-top: 3.75rem;
+	}
+	main div.card span.card-stat {
+		margin-bottom: 4px;
+	}
+	main div.card span.card-stat:last-child {
+		margin-bottom: 12px;
 	}
 }
 
@@ -318,15 +330,18 @@ hr {
 		font-size: 1.5rem;
 	}
 	#status {
-		max-width: 75vw;
+		max-width: 65vw;
 	}
 }
 
 @media only screen and (max-width: 600px) and (orientation: landscape) {
 	h2 { font-size: 1.4rem; }
 	main div.card span.card-stat {
-		margin-bottom: 6px;
+		margin-bottom: 4px;
 		padding: 4px;
+	}
+	main div.card span.card-stat:last-child {
+		margin-bottom: 6px;
 	}
 	main div.card {
 		height: calc(100vh - 3.5rem);
