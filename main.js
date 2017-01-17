@@ -11,8 +11,11 @@ var player = {
 
 var settingsData = {
   "darkMode": false,
-  "playedOnce": false
+  "playedOnce": false,
+  "version": ""
 }
+
+var version = "2017.01.16-19.50";
 
 var cardTypes = [
   "monster", // has health, dmg, value
@@ -34,6 +37,8 @@ var cards = {
   2: { },
   3: { }
 }
+
+var patchNotes = "";
 
 /*
   Element variables
@@ -92,6 +97,17 @@ infoText += "<p>open source on <a href=\"https://github.com/nathanwentworth/deck
 infoText += "<p>version: 2017.01.12-20.40</p>";
 info.addEventListener("click", function (event) { overlayToggle(infoText); });
 
+var patchText;
+patchText  = "<h3>PATCH NOTES</h3>";
+patchText += "<p>Some things have changed in Deck Dungeon since you last played!</p>";
+patchText += "<p>Balance may be a bit off, so if you're finding it too hard or too easy, let me know on twitter <a href=\"https://twitter.com/nathanwentworth\" target=\"_blank\">@nathanwentworth</a>!</p>";
+patchText += "<p>changed: weapons are now additive</p>";
+patchText += "<p>changed: lowered money recieved from monsters</p>";
+patchText += "<p>added: notification when you level up</p>";
+patchText += "<p>added: this patch note display!</p>";
+
+
+
 
 window.addEventListener("keydown", function (event) {
 
@@ -146,6 +162,16 @@ var init = function () {
     overlayToggle(helpText);
     settingsData["darkMode"] = false;
     settingsData["playedOnce"] = true;
+    settingsData["version"] = version;
+  }
+
+  console.log("version: " + settingsData.version);
+
+  if (settingsData.version != version) {
+    overlayToggle(patchText);
+    console.log("last ran an older version: " + settingsData.version);
+    console.log("current version: " + version);
+    settingsData["version"] = version;
   }
 
   // if there is card data stored in local storage, load it
@@ -188,9 +214,9 @@ var randomizeCards = function () {
 
     subCardData["type"] = "monster";
 
-    subCardData["health"] = (getRandomInt(8, 24) * player.level);
-    subCardData["dmg"] = (getRandomInt(6, 10) * player.level);
-    subCardData["value"] = (Math.ceil((subCardData["health"] + subCardData["dmg"]) / 2)  * player.level);
+    subCardData["health"] = (getRandomInt(24, 36) * player.level);
+    subCardData["dmg"] = (getRandomInt(6, 8) * player.level);
+    subCardData["value"] = (Math.ceil((subCardData["health"]) / 2));
 
   } else {
 
@@ -206,18 +232,18 @@ var randomizeCards = function () {
 
       switch (subCardData["type"]) {
         case "monster":
-          subCardData["health"] = (getRandomInt(4, 12) * player.level);
-          subCardData["dmg"] = (getRandomInt(4, 8) * player.level);
-          subCardData["value"] = (subCardData["health"] * player.level);
+          subCardData["health"] = (getRandomInt(8, 20) * player.level);
+          subCardData["dmg"] = (getRandomInt(4, 6) * player.level);
+          subCardData["value"] = Math.ceil((subCardData["health"]) / 2);
           break;
         case "heart":
-          subCardData["health"] = (getRandomInt(4, 12) * player.level);
+          subCardData["health"] = (getRandomInt(4, 8) * player.level);
           if (subCardData.health > player.money) {
             resetVal++;
           }
           break;
         case "weapon":
-          subCardData["dmg"] = (getRandomInt(4, 12) * player.level);
+          subCardData["dmg"] = (getRandomInt(2, 4) * player.level);
           if (subCardData.dmg > player.money) {
             resetVal++;
           }
@@ -276,22 +302,34 @@ var instantiateCards = function () {
     cardElem.appendChild(cardTitle);
     cardElem.appendChild(cardImage);
 
-    if (cardType == "monster" || cardType == "heart") {
+    if (cardType == "monster") {
       var cardHealth = document.createElement('span');
       cardHealth.setAttribute('class', 'card-stat health');
       cardHealth.textContent = "HP: " + subCardData["health"];
       cardElem.appendChild(cardHealth);
-    }
-    if (cardType == "monster" || cardType == "weapon") {
+
       var cardDmg = document.createElement('span');
       cardDmg.setAttribute('class', 'card-stat dmg');
       cardDmg.textContent = "ATK: " + subCardData["dmg"];
       cardElem.appendChild(cardDmg);
     }
+    else if (cardType == "heart") {
+      var cardHealth = document.createElement('span');
+      cardHealth.setAttribute('class', 'card-stat health');
+      cardHealth.textContent = "HP: +" + subCardData["health"];
+      cardElem.appendChild(cardHealth);
+
+    }
+    else if (cardType == "weapon") {
+      var cardDmg = document.createElement('span');
+      cardDmg.setAttribute('class', 'card-stat dmg');
+      cardDmg.textContent = "ATK: +" + subCardData["dmg"];
+      cardElem.appendChild(cardDmg);
+    }
     else if (cardType == "coin") {
       var cardValue = document.createElement('span');
       cardValue.setAttribute('class', 'card-stat value');
-      cardValue.textContent = "VAL: " + subCardData["value"];
+      cardValue.textContent = "MONEY: +" + subCardData["value"];
       cardElem.appendChild(cardValue);
     }
 
@@ -349,13 +387,13 @@ var cardAction = function (event, index) {
     case "heart":
       // hearts can only be taken by spending money equal to heart value
       if (player["money"] >= card["health"]) {
+        if (player.health != player.maxHealth) {
+          popupText(event, index, "+" + card["health"] + "HP -" + card["health"] + "MONEY", 1.25);
+        } else {
+          popupText(event, index, "+0HP -" + card["health"] + "MONEY", 1.25);
+        }
         changeStat("health", card["health"]);
         changeStat("money", -card["health"]);
-        if (player.health != player.maxHealth) {
-          popupText(event, index, "+" + card["health"] + "HP -" + card["health"] + "MONEY", 1);
-        } else {
-          popupText(event, index, "+0HP -" + card["health"] + "MONEY", 1);
-        }
         setCardInactive(index);
         incrementTurn();
         setTimeout( randomizeCards, 2500);
@@ -367,10 +405,10 @@ var cardAction = function (event, index) {
     case "weapon":
       // weapons can only be taken by spending money equal to damage value
       if (player["money"] >= card["dmg"]) {
-        player["atk"] = 0;
+        // player["atk"] = 0;
         changeStat("atk", card["dmg"]);
         changeStat("money", -card["dmg"]);
-        popupText(event, index, "+" + card["dmg"] + "ATK -" + card["dmg"] + "MONEY", 1);
+        popupText(event, index, "+" + card["dmg"] + "ATK -" + card["dmg"] + "MONEY", 1.25);
         setCardInactive(index);
         incrementTurn();
         setTimeout( randomizeCards, 2500);
@@ -381,7 +419,7 @@ var cardAction = function (event, index) {
       break;
     case "coin":
       changeStat("money", card["value"]);
-      popupText(event, index, "+" + card["value"] + "MONEY", 1);
+      popupText(event, index, "+" + card["value"] + "MONEY", 1.25);
       setCardInactive(index);
       incrementTurn();
       setTimeout( randomizeCards, 2500);
@@ -452,7 +490,7 @@ var fight = function (card, event, index) {
 
   var text = null;
   // player attacking
-  if (getRandomInt(1, 100) > 50) {
+  if (getRandomInt(1, 100) > (25 * (player.health / player.maxHealth))) {
     card["health"] -= player["atk"];
     text = "MONSTER HP -" + player["atk"];
     for (var i = 0; i < cardNode.childNodes.length; i++) {
@@ -466,24 +504,28 @@ var fight = function (card, event, index) {
   // check of the monster is dead after the last hit
   // don't allow the monster to attack if so
   if (card["health"] <= 0) {
-    // setCardInactive(index);
-    cardNode.style.animation = "moveCardDown 1s";
-    cardNode.style.top = "100vh";
-    setTimeout( randomizeCards, 1500);
-    player["money"] += card["value"];
-    if (text == null) {
-      text = "MONSTER DEFEATED, MONEY +" + card["value"];
+    setCardInactive(index);
+    
+    incrementTurn();
+
+    if (player.turns % 6 == 1 && player.turns != 1) {
+      setTimeout( randomizeCards, 3500);
     } else {
-      text = "MONSTER DEFEATED, MONEY +" + card["value"] + " " + text;
+      setTimeout( randomizeCards, 1500);
     }
 
+    cardNode.style.animation = "moveCardDown 1s";
+    cardNode.style.top = "100vh";
+    player["money"] += card["value"];
+    text = "MONSTER DEFEATED, MONEY +" + card["value"];
+
+
     popupText(event, index, text, 3);
-    incrementTurn();
     return;
   }
 
   // monster attacking
-  if (getRandomInt(1, 100) < 50) {
+  if (getRandomInt(1, 100) < 75) {
     player["health"] -= card["dmg"];
     if (text == null) {
       text = "PLAYER HP -" + card["dmg"];
@@ -497,7 +539,7 @@ var fight = function (card, event, index) {
     text = "MISS!";
   }
 
-  popupText(event, index, text, 1.5);
+  popupText(event, index, text, 1.75);
 }
 
 var changeStat = function (type, value) {
@@ -604,6 +646,16 @@ var incrementTurn = function () {
     player.level++;
     player.maxHealth = player.level * 16;
     player.health += 16;
+
+    setTimeout( function () {
+      var levelUpText = document.createElement("p");
+      levelUpText.textContent = "LEVEL UP! +16 MAX HP";
+      levelUpText.classList.add("level-up");
+
+      cardContainer.appendChild(levelUpText);
+
+    }, 1500);
+
   }
 }
 
@@ -650,6 +702,9 @@ var gameOver = function () {
 
     restartButton.addEventListener("click", function() { clearData(); init(); });
 
+    restartButton.classList.add("btn");
+    restartButton.classList.add("restart");
+
     cardContainer.style.flexDirection = "column";
 
     cardContainer.appendChild(gameOverTitle);
@@ -664,6 +719,3 @@ function getRandomInt(min, max) {
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min)) + min;
 }
-
-
-// init();

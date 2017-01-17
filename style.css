@@ -132,6 +132,10 @@ pre {
 	text-decoration: underline;
 }
 
+.restart {
+	color: #ff0000;
+}
+
 main {
 	height: 100vh;
 	width: 100vw;
@@ -149,10 +153,6 @@ main * {
 	-ms-user-select: none;
 	user-select: none;
 	cursor: default;
-}
-
-main > p:last-child:hover {
-	text-decoration: underline;
 }
 
 main .game-title {
@@ -207,6 +207,15 @@ main div.card span.card-stat {
 	color: #222;
 	border-radius: 6px;
 	padding: 8px;
+}
+
+main .level-up {
+	position: absolute;
+	left: 50vw;
+	top: 50vh;
+	transform: translate(-50%, -50%);
+
+	font-size: 2em;
 }
 
 .disabled {}
